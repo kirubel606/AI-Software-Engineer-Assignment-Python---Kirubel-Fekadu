@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any, Dict, Optional, Union
 
 import requests
+from datetime import datetime, timezone
 
 from .tokens import OAuth2Token
 
@@ -26,10 +27,9 @@ class Client:
         if headers is None:
             headers = {}
 
+        # We make sure that both OAuth2Token and dict tokens are refreshed if they are expired not only just by checking of its a dictionary but alos checking if it expires at is less than the current time hence why i made a check for both and made datetime imports.
         if api:
-            if not self.oauth2_token or (
-                isinstance(self.oauth2_token, OAuth2Token) and self.oauth2_token.expired
-            ):
+            if not self.oauth2_token or (isinstance(self.oauth2_token, OAuth2Token) and self.oauth2_token.expired) or (isinstance(self.oauth2_token, dict) and self.oauth2_token.get("expires_at", 0) <= int(datetime.now(tz=timezone.utc).timestamp())):
                 self.refresh_oauth2()
 
             if isinstance(self.oauth2_token, OAuth2Token):

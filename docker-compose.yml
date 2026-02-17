@@ -1,0 +1,8 @@
+version: "3.9"
+
+services:
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["python", "-m", "pytest", "-v"]
